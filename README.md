@@ -1,19 +1,18 @@
-# 🛡️ Disk Guard Pro v1.1.0 - Ultimate Edition
+# 🛡️ Disk Guard Pro v1.5.0 - Forensic Platinum Edition
 
-**Disk Guard Pro** è un software professionale per la clonazione "byte-to-byte" di supporti fisici (dischi rigidi, chiavette USB, SD card). Progettato per la massima sicurezza, combina crittografia militare, compressione dei dati e funzionalità di recupero forense.
+**Disk Guard Pro** è il software definitivo per la clonazione "byte-to-byte" certificata, la protezione crittografica avanzata e la gestione forense dei dati. Progettato per la massima sicurezza e conformità legale (GDPR), questa versione **Platinum** introduce standard di integrità e sicurezza senza precedenti.
 
 ---
 
-## 🚀 Funzionalità Killer
+## 🚀 Funzionalità Forensi & GDPR (v1.5.0)
 
-- **Copia Byte-to-Byte:** Clonazione esatta del supporto fisico bit per bit.
-- **Criptazione AES-256:** Protezione dei dati tramite algoritmo AES in modalità CTR (Symmetric & Seekable).
-- **Compressione Intelligente:** Utilizzo di Zlib per ridurre drasticamente le dimensioni del backup.
-- **Mirroring Cloud (SFTP):** Backup simultaneo su server remoto durante la copia locale.
-- **Resume con Indice (.idx):** Possibilità di interrompere e riprendere la copia esattamente da dove si era fermata, anche dopo un riavvio.
-- **Smart Skip (Settori Danneggiati):** Non si blocca sui dischi morenti; salta i settori corrotti e genera una mappa `.bad`.
-- **Secure Wipe (DoD 5220.22-M):** Bonifica il disco di destinazione con sovrascritture multiple prima della copia.
-- **Espulsione Sicura:** Unmount automatico dell'hardware al termine dell'operazione.
+- **Integrità Certificata SHA-256:** Calcolo in tempo reale dell'impronta digitale del supporto sorgente durante la clonazione per garantire l'immutabilità probatoria.
+- **Sicurezza GDPR (PBKDF2):** Derivazione della chiave crittografica tramite 100.000 iterazioni PBKDF2 con Salt casuale di 16 byte. Protezione estrema contro attacchi brute-force.
+- **Copia Byte-to-Byte Forense:** Clonazione esatta inclusi file eliminati e *slack space*.
+- **Software Write Block:** Protezione nativa contro la scrittura sulla sorgente per preservare l'integrità dei dati originali.
+- **Metriche Real-time:** Monitoraggio istantaneo della velocità (MB/s) e calcolo dinamico dell'ETA (tempo stimato).
+- **Resume con Indice (.idx):** Ripresa automatica della copia in caso di interruzione, mantenendo l'allineamento crittografico.
+- **Logging di Audit Esteso:** Registro CSV dettagliato conforme alla catena di custodia digitale.
 
 ---
 
@@ -26,3 +25,13 @@ Assicurati di avere Python 3.10 o superiore installato. Installa le dipendenze n
 
 ```bash
 pip install -r requirements.txt
+```
+
+### Esecuzione:
+È necessario eseguire il software con privilegi di **Amministratore** o **Root** per accedere direttamente ai supporti fisici.
+
+---
+
+## 📖 Crediti e Note Legali
+Sviluppato da **Massimo Lo Sciuto**. Supporto tecnico fornito da **AI Assistant (Antigravity)**.
+Il software è progettato per uso professionale in ambito investigativo e di sicurezza informatica.
