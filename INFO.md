@@ -1,6 +1,6 @@
-# 📘 Guida Tecnica: Disk Guard Pro v1.5.0 Platinum
+# 📘 Guida Tecnica: Disk Guard Pro v1.8.0 Forensic Sapphire
 
-**Disk Guard Pro** è una suite software professionale per la clonazione "byte-to-byte", la protezione crittografica e la gestione forense dei dati. A differenza dei programmi di backup convenzionali, opera a basso livello per garantire l'immutabilità e la validità legale del dato acquisito.
+**Disk Guard Pro** è una suite software professionale per la clonazione forense "bit-to-bit", la protezione crittografica e la gestione legalmente valida dei dati. Opera a basso livello per garantire l'immutabilità e la validità legale del dato acquisito, con protezioni reali a livello di sistema operativo.
 
 ---
 
@@ -10,35 +10,46 @@ Il software è stato ingegnerizzato per soddisfare i rigorosi standard della **D
 
 ### 1. Integrità Digitale (Forense)
 
-*   **Fingerprint SHA-256:** Ogni bit letto dal supporto sorgente viene elaborato in tempo reale attraverso l'algoritmo SHA-256. Questo produce una "firma digitale" unica che prova l'identità tra originale e copia in sede giudiziaria.
-*   **Software Write Block (SWB):** Implementa un meccanismo di sola lettura logica per prevenire alterazioni accidentali della sorgente (timestamp, metadati, file eliminati).
-*   **Catena di Custodia:** Il registro `forensic_audit_v150.csv` documenta ogni fase dell'acquisizione, inclusi operatori, tempi e identificativi hardware.
+*   **Fingerprint SHA-256 Ripristinabile:** Ogni bit letto dal supporto sorgente viene elaborato in tempo reale attraverso l'algoritmo SHA-256. Lo stato interno dell'hash viene serializzato (Base64/Pickle) nel file `.idx` ad ogni checkpoint: in caso di interruzione e ripresa, l'impronta finale rimane certificabile sull'intera sorgente.
+*   **Software Write Block Reale (SWB):** Imposta il blocco hardware di scrittura tramite `fcntl.ioctl(BLKROSET)` sul device sorgente — non semplice apertura in `rb`, ma vera protezione OS-level che impedisce qualsiasi scrittura accidentale sui dati originali.
+*   **Acquisizione Bit-to-Bit:** Supporta interi dischi fisici (`/dev/sda`) e singole partizioni (`/dev/sda1`), rilevati tramite `lsblk`.
 
 ### 2. Sicurezza del Trattamento (GDPR)
 
-*   **PBKDF2 (Password-Based Key Derivation Function 2):** In conformità all'Art. 32 del GDPR, Disk Guard Pro non utilizza direttamente la password. Applica 100.000 iterazioni PBKDF2 con un **Salt casuale** di 16 byte per derivare una chiave a 256-bit impenetrabile ad attacchi brute-force.
-*   **Crittografia AES-256 CTR:** I dati sono protetti in modalità "Symmetric & Seekable", permettendo accessi veloci pur mantenendo la massima blindatura militare.
+*   **PBKDF2 (Art. 32 GDPR):** 100.000 iterazioni con Salt casuale di 16 byte per una chiave AES-256 impenetrabile.
+*   **Nonce AES Casuale e Unico:** Il nonce AES-256-CTR è generato con `os.urandom(8)` per ogni acquisizione e salvato nel file `.idx`. Elimina la vulnerabilità critica precedente dove il riutilizzo di nonce+chiave annullava la cifratura.
+*   **Registro Operatore (Art. 30 GDPR):** Campo obbligatorio nell'UI per il nome del responsabile del trattamento. Ogni voce del log CSV include il nome dell'operatore per garantire la catena di custodia completa.
 
 ### 3. Business Continuity
 
-*   **Resume Intelligente:** Grazie al file `.idx` e al calcolo deterministico del nonce, il processo può essere ripreso dopo un'interruzione di corrente o un arresto forzato senza perdere l'integrità dei blocchi già scritti.
+*   **Resume Intelligente:** Il file `.idx` conserva offset di sorgente/destinazione, salt, nonce **e stato SHA-256** serializzato. La ripresa è completa: crittograficamente allineata, con hash certificabile.
 
 ---
 
-## 🛠️ Tecnologie Chiave (v1.5.0)
+## 🛠️ Tecnologie Chiave (v1.6.0)
 
 | Funzione | Implementazione Tecnica | Scopo |
 | :--- | :--- | :--- |
-| **KDF** | PBKDF2 (100.000 rounds) | Protezione contro attacchi Brute-Force |
-| **Hashing** | SHA-256 Real-time | Integrità Forense e Validità Legale |
-| **Encryption** | AES-256 CTR | Riservatezza e Accesso Casuale |
-| **Compression** | Zlib (Block-wise) | Ottimizzazione dello spazio su disco |
-| **I/O** | 1MB Buffered Binary Read | Prestazioni e stabilità forense |
+| **KDF** | PBKDF2 (100.000 rounds) | Protezione contro attacchi Brute-Force (Art.32 GDPR) |
+| **Hashing** | SHA-256 ricalcolato su resume | Integrità forense senza pickle/RCE risk |
+| **Encryption** | AES-256 CTR + Nonce casuale | Riservatezza senza vulnerabilità di nonce riuso |
+| **SWB** | `fcntl.ioctl(BLKROSET)` | Blocco scrittura OS-level sulla sorgente |
+| **Resume** | `.idx` con HMAC-SHA256 | Protezione da manomissione del file di ripresa |
+| **Audit Trail** | CSV con Operatore + SHA-256 | Catena di custodia conforme GDPR Art.30 |
+| **Retention** | Purge CSV su soglia configurabile | Conformità GDPR Art.5c (limitazione conservazione) |
+| **Report** | File .txt strutturato | Report forense certificabile e stampabile |
+| **Verifica** | SHA-256 su immagine destination | Prova di corrispondenza post-acquisizione |
+| **Bad Sectors** | Zero-pad + log audit | Standard forense: continua senza interrompere |
+| **Thread Safety** | `threading.Lock` | Zero race condition tra UI e worker thread |
+| **UI Reattiva** | Disable/enable durante acquisizione | Previene avvio multiplo e modifiche a caldo |
+| **Disk Detection** | `lsblk` + fallback psutil | Rilevamento dischi fisici e partizioni |
+| **Compression** | Zlib (Block-wise) | Ottimizzazione spazio su disco |
+| **I/O** | 1MB Buffered Binary Read + fsync | Prestazioni e stabilità forense |
 
 ---
 
 ## 📖 Crediti
 
 *   **Sviluppatore:** Massimo Lo Sciuto
-*   **Versione:** 1.5.0 Forensic Platinum Edition
+*   **Versione:** 1.8.0 Forensic Sapphire Edition
 *   **AI Support:** Antigravity AI
